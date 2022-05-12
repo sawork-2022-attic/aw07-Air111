@@ -1,0 +1,21 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: pos-delivery
+  cloud:
+    function:
+      definition: itemDeliver
+    stream:
+      function:
+        bindings:
+          itemDeliver-in-0: ItemDeliverer
+      bindings:
+        order-approved:
+          destination: item-approved
+      rabbit:
+        bindings:
+          output:
+            consumer:
+              declare-exchange: false

@@ -68,8 +68,8 @@ public class CartController implements CartApi {
     }
 
     @Override
-    public ResponseEntity<List<ItemDto>> checkout(String userId) {
-        List<Item> cart = this.cartService.remove(userId);
+    public ResponseEntity<List<ItemDto>> checkoutCart(String userId) {
+        List<Item> cart = this.cartService.checkout(userId);
         if (cart == null)
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         List<ItemDto> items = new ArrayList<>(cartMapper.toItemsDto(cart));

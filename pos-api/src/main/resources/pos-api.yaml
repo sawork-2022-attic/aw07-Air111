@@ -99,7 +99,7 @@ paths:
                 $ref: "#/components/schemas/Error"
     delete:
       summary: checkout, delete the cart from the server
-      operationId: checkout
+      operationId: checkoutCart
       tags:
         - cart
       parameters:
@@ -186,6 +186,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Item"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /order/checkout:
+    post:
+      summary: checkout a list of items
+      operationId: checkout
+      tags:
+        - order
+      requestBody:
+        description: the list of items
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Cart"
+      responses:
+        '200':
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                type: integer
         default:
           description: unexpected error
           content:

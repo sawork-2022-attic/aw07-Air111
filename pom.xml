@@ -79,6 +79,11 @@
                 <artifactId>pos-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.micropos</groupId>
+                <artifactId>pos-carts</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

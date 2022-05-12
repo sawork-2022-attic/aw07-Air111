@@ -1,21 +1,43 @@
 package com.micropos.carts.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.micropos.carts.mapper.CartMapper;
 import com.micropos.carts.model.Item;
 import com.micropos.carts.repository.Cart;
 import com.micropos.carts.repository.CartRepository;
+import com.micropos.dto.ItemDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.SplittableRandom;
 
 @Service
 public class CartServiceImpl implements CartService {
 
+    private CartMapper cartMapper;
     private CartRepository cartRepository;
 
-    public CartServiceImpl(@Autowired CartRepository cartRepository) {
+    private RestTemplate restTemplate;
+
+    @Autowired
+    public void setCartRepository(CartRepository cartRepository) {
         this.cartRepository = cartRepository;
+    }
+
+    @Autowired
+    public void setCartMapper(CartMapper cartMapper) {
+        this.cartMapper = cartMapper;
+    }
+
+    @Autowired
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -43,7 +65,21 @@ public class CartServiceImpl implements CartService {
         return cartRepository.removeProduct(userId, productId);
     }
 
-    public List<Item> remove(String userId)  {
-        return cartRepository.remove(userId);
+    @Override
+    public List<Item> checkout(String userId)  {
+        List<Item> cart = cartRepository.remove(userId);
+        if (cart != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<String> request = null;
+            try {
+                request = new HttpEntity<>(mapper.writeValueAsString(cart), headers);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            restTemplate.postForObject("http://localhost:8080/api/order/checkout", request, Integer.class);
+        }
+        return cart;
     }
 }
