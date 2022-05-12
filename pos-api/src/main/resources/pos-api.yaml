@@ -97,6 +97,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+    delete:
+      summary: checkout, delete the cart from the server
+      operationId: checkout
+      tags:
+        - cart
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The cart id
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A paged array of items
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /cart/{userId}/{productId}:
     delete:
       summary: Remove the product from the cart

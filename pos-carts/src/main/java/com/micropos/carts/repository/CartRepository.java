@@ -15,6 +15,8 @@ public interface CartRepository {
 
     public boolean addItem(String userId, String productId, int amount);
 
+    public List<Item> remove(String userId);
+
     public boolean removeProduct(String userId, String productId);
 
 }

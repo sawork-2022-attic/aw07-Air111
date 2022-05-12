@@ -42,4 +42,8 @@ public class CartServiceImpl implements CartService {
     public boolean remove(String userId, String productId) {
         return cartRepository.removeProduct(userId, productId);
     }
+
+    public List<Item> remove(String userId)  {
+        return cartRepository.remove(userId);
+    }
 }

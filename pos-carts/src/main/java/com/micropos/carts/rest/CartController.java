@@ -64,9 +64,15 @@ public class CartController implements CartApi {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
         List<ItemDto> items = new ArrayList<>(cartMapper.toItemsDto(this.cartService.items(userId)));
-        if (items == null) {
-            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
-        }
+        return new ResponseEntity<>(items, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<List<ItemDto>> checkout(String userId) {
+        List<Item> cart = this.cartService.remove(userId);
+        if (cart == null)
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        List<ItemDto> items = new ArrayList<>(cartMapper.toItemsDto(cart));
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
 }

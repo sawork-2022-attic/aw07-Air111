@@ -15,5 +15,7 @@ public interface CartService {
 
     public boolean add(String userId, String productId, int amount);
 
+    public List<Item> remove(String userId);
+
     public boolean remove(String userId, String productId);
 }

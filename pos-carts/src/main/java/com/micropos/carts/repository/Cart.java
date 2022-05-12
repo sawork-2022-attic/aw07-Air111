@@ -7,29 +7,35 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class Cart implements CartRepository {
 
     private List<List<Item>> carts = new ArrayList<>();
 
-    private Integer count = 0;
+    private Set<Integer> cartIds = new HashSet<>();
+    private int count = 0;
 
     @Override
     public Integer newCart() {
-        if (count == Integer.MAX_VALUE)
+        if (cartIds.size() >= Integer.MAX_VALUE)
             return null;
-        count += 1;
-        while (carts.size() < count)
+        while (cartIds.contains(count)) {
+            count += 1;
+        }
+        cartIds.add(count);
+        while (carts.size() < count + 1)
             carts.add(new ArrayList<>());
-        return count - 1;
+        return count;
     }
 
     @Override
     @Cacheable(value = "carts", key = "#userId")
     public List<Item> items(String userId) {
-        return carts.get(Integer.valueOf(userId));
+        return carts.get(Integer.parseInt(userId));
     }
 
     @Override
@@ -72,6 +78,18 @@ public class Cart implements CartRepository {
             }
         }
         return false;
+    }
+
+    @Override
+    @CacheEvict(value = "carts", key = "#userId")
+    public List<Item> remove(String userId) {
+        int id = Integer.parseInt(userId);
+        if (!cartIds.contains(id))
+            return null;
+        List<Item> ret = carts.get(id);
+        carts.remove(id);
+        cartIds.remove(id);
+        return ret;
     }
 
 }
